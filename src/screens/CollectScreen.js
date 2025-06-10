@@ -13,14 +13,14 @@ const CollectScreen = ({ navigation }) => {
       <View style={styles.content}>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => navigation.navigate('MildaDistribution')}
+          onPress={() => navigation.navigate('GpsPhoto', { nextScreen: 'MildaDistribution' })}
         >
           <Text style={styles.buttonText}>DISTRIBUTION MILDA</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.button}
-          onPress={() => navigation.navigate('MedicineDistribution')}
+          onPress={() => navigation.navigate('GpsPhoto', { nextScreen: 'MedicineDistribution' })}
         >
           <Text style={styles.buttonText}>DISTRIBUTION MÉDICAMENT</Text>
         </TouchableOpacity>

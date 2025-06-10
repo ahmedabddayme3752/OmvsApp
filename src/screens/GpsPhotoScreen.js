@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
-const GpsPhotoScreen = ({ navigation }) => {
+const GpsPhotoScreen = ({ navigation, route }) => {
   const [photo, setPhoto] = useState(null);
   const [location, setLocation] = useState({
     longitude: '',
@@ -26,6 +26,9 @@ const GpsPhotoScreen = ({ navigation }) => {
     commune: 'Rosso',
   });
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
+
+  // Get the nextScreen parameter from route params
+  const nextScreen = route?.params?.nextScreen;
 
   // Location data
   const locationData = {
@@ -132,6 +135,33 @@ const GpsPhotoScreen = ({ navigation }) => {
 
   const getCommunes = () => {
     return locationData[selectedLocation.pays]?.[selectedLocation.region]?.[selectedLocation.moughataa] || [];
+  };
+
+  const handleNext = () => {
+    if (nextScreen) {
+      // If we have a specific next screen, navigate to it
+      navigation.navigate(nextScreen);
+    } else {
+      // Show choice dialog
+      Alert.alert(
+        'Choisir le type de distribution',
+        'Quel type de distribution souhaitez-vous effectuer ?',
+        [
+          {
+            text: 'Distribution MILDA',
+            onPress: () => navigation.navigate('MildaDistribution')
+          },
+          {
+            text: 'Distribution Médicament',
+            onPress: () => navigation.navigate('MedicineDistribution')
+          },
+          {
+            text: 'Annuler',
+            style: 'cancel'
+          }
+        ]
+      );
+    }
   };
 
   return (
@@ -267,7 +297,7 @@ const GpsPhotoScreen = ({ navigation }) => {
 
         <TouchableOpacity
           style={[styles.button, styles.nextButton]}
-          onPress={() => navigation.navigate('MildaDistribution')}
+          onPress={handleNext}
         >
           <Text style={styles.buttonText}>SUIVANT</Text>
         </TouchableOpacity>
