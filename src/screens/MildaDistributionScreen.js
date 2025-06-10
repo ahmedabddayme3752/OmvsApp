@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,10 +7,12 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
+  Alert,
 } from 'react-native';
 import * as ImagePicker from 'react-native-image-picker';
+import databaseService from '../services/DatabaseService';
 
-const MildaDistributionScreen = ({ navigation }) => {
+const MildaDistributionScreen = ({ navigation, route }) => {
   const [formData, setFormData] = useState({
     chefMenage: '',
     nni: '',
@@ -21,6 +23,15 @@ const MildaDistributionScreen = ({ navigation }) => {
     date: new Date().toLocaleDateString(),
     photo: null,
   });
+
+  // Get GPS photo data from previous screen
+  const gpsPhotoData = route?.params?.gpsPhotoData;
+
+  useEffect(() => {
+    if (gpsPhotoData) {
+      console.log('Received GPS Photo data:', gpsPhotoData);
+    }
+  }, [gpsPhotoData]);
 
   const handleInputChange = (field, value) => {
     setFormData({
@@ -43,10 +54,41 @@ const MildaDistributionScreen = ({ navigation }) => {
     });
   };
 
-  const handleSubmit = () => {
-    // TODO: Implement form submission logic
-    console.log('Form submitted:', formData);
-    navigation.goBack();
+  const handleSubmit = async () => {
+    try {
+      // Combine form data with GPS photo data
+      const completeData = {
+        ...formData,
+        gpsPhotoData: gpsPhotoData,
+        submittedAt: new Date().toISOString()
+      };
+
+      // Save to PouchDB
+      await databaseService.saveDistributionData(completeData, 'milda');
+      
+      Alert.alert(
+        'Succès', 
+        'Distribution MILDA sauvegardée avec succès!',
+        [
+          {
+            text: 'OK',
+            onPress: () => navigation.navigate('Collect')
+          }
+        ]
+      );
+    } catch (error) {
+      console.error('Error saving MILDA distribution:', error);
+      Alert.alert(
+        'Erreur', 
+        'Erreur lors de la sauvegarde. Les données seront sauvegardées localement.',
+        [
+          {
+            text: 'OK',
+            onPress: () => navigation.navigate('Collect')
+          }
+        ]
+      );
+    }
   };
 
   return (

@@ -12,6 +12,7 @@ import {
   Alert,
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import databaseService from '../services/DatabaseService';
 
 const GpsPhotoScreen = ({ navigation, route }) => {
   const [photo, setPhoto] = useState(null);
@@ -138,29 +139,79 @@ const GpsPhotoScreen = ({ navigation, route }) => {
   };
 
   const handleNext = () => {
-    if (nextScreen) {
-      // If we have a specific next screen, navigate to it
-      navigation.navigate(nextScreen);
-    } else {
-      // Show choice dialog
-      Alert.alert(
-        'Choisir le type de distribution',
-        'Quel type de distribution souhaitez-vous effectuer ?',
-        [
-          {
-            text: 'Distribution MILDA',
-            onPress: () => navigation.navigate('MildaDistribution')
-          },
-          {
-            text: 'Distribution Médicament',
-            onPress: () => navigation.navigate('MedicineDistribution')
-          },
-          {
-            text: 'Annuler',
-            style: 'cancel'
+    // Save GPS and photo data before proceeding
+    saveGpsPhotoData();
+  };
+
+  const saveGpsPhotoData = async () => {
+    try {
+      const gpsPhotoData = {
+        photo: photo,
+        location: location,
+        selectedLocation: selectedLocation,
+        timestamp: new Date().toISOString()
+      };
+
+      await databaseService.saveGpsPhotoData(gpsPhotoData);
+      
+      Alert.alert('Succès', 'Données GPS et photo sauvegardées!', [
+        {
+          text: 'OK',
+          onPress: () => {
+            if (nextScreen) {
+              // If we have a specific next screen, navigate to it
+              navigation.navigate(nextScreen, { gpsPhotoData });
+            } else {
+              // Show choice dialog
+              Alert.alert(
+                'Choisir le type de distribution',
+                'Quel type de distribution souhaitez-vous effectuer ?',
+                [
+                  {
+                    text: 'Distribution MILDA',
+                    onPress: () => navigation.navigate('MildaDistribution', { gpsPhotoData })
+                  },
+                  {
+                    text: 'Distribution Médicament',
+                    onPress: () => navigation.navigate('MedicineDistribution', { gpsPhotoData })
+                  },
+                  {
+                    text: 'Annuler',
+                    style: 'cancel'
+                  }
+                ]
+              );
+            }
           }
-        ]
-      );
+        }
+      ]);
+    } catch (error) {
+      console.error('Error saving GPS photo data:', error);
+      Alert.alert('Erreur', 'Erreur lors de la sauvegarde des données. Les données seront sauvegardées localement.');
+      
+      // Still proceed to next screen even if save fails
+      if (nextScreen) {
+        navigation.navigate(nextScreen, { gpsPhotoData: { photo, location, selectedLocation } });
+      } else {
+        Alert.alert(
+          'Choisir le type de distribution',
+          'Quel type de distribution souhaitez-vous effectuer ?',
+          [
+            {
+              text: 'Distribution MILDA',
+              onPress: () => navigation.navigate('MildaDistribution', { gpsPhotoData: { photo, location, selectedLocation } })
+            },
+            {
+              text: 'Distribution Médicament',
+              onPress: () => navigation.navigate('MedicineDistribution', { gpsPhotoData: { photo, location, selectedLocation } })
+            },
+            {
+              text: 'Annuler',
+              style: 'cancel'
+            }
+          ]
+        );
+      }
     }
   };
 

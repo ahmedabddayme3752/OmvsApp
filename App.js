@@ -1,7 +1,6 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { AppRegistry } from 'react-native';
 
 // Import screens
 import SplashScreen from './src/screens/SplashScreen';
@@ -10,6 +9,7 @@ import CollectScreen from './src/screens/CollectScreen';
 import GpsPhotoScreen from './src/screens/GpsPhotoScreen';
 import MildaDistributionScreen from './src/screens/MildaDistributionScreen';
 import MedicineDistributionScreen from './src/screens/MedicineDistributionScreen';
+import DataManagementScreen from './src/screens/DataManagementScreen';
 
 const Stack = createStackNavigator();
 
@@ -58,10 +58,12 @@ export default function App() {
           component={MedicineDistributionScreen}
           options={{ title: 'Distribution Médicament' }}
         />
+        <Stack.Screen 
+          name="DataManagement" 
+          component={DataManagementScreen}
+          options={{ title: 'Gestion des données' }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
-}
-
-// Register the main component
-AppRegistry.registerComponent('main', () => App); 
+} 

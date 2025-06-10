@@ -10,11 +10,17 @@
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "1.21.0",
-    "@react-native-picker/picker": "^2.11.0",
+    "@react-native-picker/picker": "2.6.1",
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/stack": "^6.3.20",
+    "base-64": "^1.0.0",
     "expo": "~50.0.5",
     "expo-status-bar": "~1.11.1",
+    "pouchdb-adapter-asyncstorage": "^6.4.1",
+    "pouchdb-adapter-http": "^9.0.0",
+    "pouchdb-mapreduce": "^9.0.0",
+    "pouchdb-react-native": "^6.4.1",
+    "pouchdb-replication": "^9.0.0",
     "react": "18.2.0",
     "react-native": "0.73.6",
     "react-native-geolocation-service": "^5.3.1",
@@ -25,7 +31,11 @@
     "react-native-vector-icons": "^10.0.3"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "@babel/plugin-proposal-class-properties": "^7.18.6",
+    "@babel/plugin-proposal-decorators": "^7.27.1",
+    "@babel/plugin-transform-class-properties": "^7.27.1",
+    "@babel/plugin-transform-flow-strip-types": "^7.27.1"
   },
   "private": true
 }

@@ -24,6 +24,13 @@ const CollectScreen = ({ navigation }) => {
         >
           <Text style={styles.buttonText}>DISTRIBUTION MÉDICAMENT</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.button, styles.dataButton]}
+          onPress={() => navigation.navigate('DataManagement')}
+        >
+          <Text style={styles.buttonText}>GESTION DES DONNÉES</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -45,6 +52,9 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 5,
     alignItems: 'center',
+  },
+  dataButton: {
+    backgroundColor: '#4CAF50',
   },
   buttonText: {
     color: '#fff',
