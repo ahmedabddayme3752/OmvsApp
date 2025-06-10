@@ -1,0 +1,102 @@
+version: '3.8'
+
+services:
+  # CouchDB Database
+  couchdb:
+    image: couchdb:latest
+    container_name: omvs-couchdb
+    ports:
+      - "5984:5984"
+    environment:
+      - COUCHDB_USER=admin
+      - COUCHDB_PASSWORD=password
+    volumes:
+      - couchdb_data:/opt/couchdb/data
+      - couchdb_config:/opt/couchdb/etc/local.d
+    networks:
+      - omvs-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5984/_up"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  # Database Initialization
+  db-init:
+    image: curlimages/curl:latest
+    container_name: omvs-db-init
+    depends_on:
+      couchdb:
+        condition: service_healthy
+    networks:
+      - omvs-network
+    command: >
+      sh -c "
+        echo 'Waiting for CouchDB to be ready...' &&
+        sleep 10 &&
+        echo 'Creating omvs_distributions database...' &&
+        curl -X PUT http://admin:password@couchdb:5984/omvs_distributions &&
+        echo 'Creating omvs_gps_photos database...' &&
+        curl -X PUT http://admin:password@couchdb:5984/omvs_gps_photos &&
+        echo 'Databases created successfully!'
+      "
+    restart: "no"
+
+  # React Native/Expo App (for web development)
+  app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: omvs-app
+    ports:
+      - "19000:19000"  # Expo dev server
+      - "19001:19001"  # Expo dev server (secure)
+      - "19002:19002"  # Expo dev server (ngrok)
+      - "19006:19006"  # Expo web
+    environment:
+      - EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0
+      - REACT_NATIVE_PACKAGER_HOSTNAME=0.0.0.0
+      - EXPO_CLI_NO_DOCTOR=1
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - expo_cache:/home/expo/.expo
+    depends_on:
+      - couchdb
+      - db-init
+    networks:
+      - omvs-network
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+
+  # CouchDB Admin Interface (Fauxton)
+  fauxton:
+    image: nginx:alpine
+    container_name: omvs-fauxton
+    ports:
+      - "8080:80"
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - couchdb
+    networks:
+      - omvs-network
+    restart: unless-stopped
+
+volumes:
+  couchdb_data:
+    driver: local
+  couchdb_config:
+    driver: local
+  expo_cache:
+    driver: local
+
+networks:
+  omvs-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16 
