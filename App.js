@@ -13,6 +13,26 @@ import DataManagementScreen from './src/screens/DataManagementScreen';
 
 const Stack = createStackNavigator();
 
+/**
+ * Main App Component
+ * 
+ * This is the root component of the OMVS mobile application.
+ * It sets up the navigation structure and defines the flow between screens.
+ * 
+ * Navigation Flow:
+ * 1. Splash -> Login -> Collect (main menu)
+ * 2. From Collect: can go to GpsPhoto or DataManagement
+ * 3. From GpsPhoto: can go to MildaDistribution or MedicineDistribution
+ * 4. All screens can navigate back using the header back button
+ * 
+ * Features:
+ * - Stack-based navigation with header
+ * - Consistent header styling across all screens
+ * - French language interface
+ * - Proper screen titles and navigation options
+ * 
+ * @returns {JSX.Element} - The complete navigation structure wrapped in NavigationContainer
+ */
 export default function App() {
   return (
     <NavigationContainer>
@@ -28,6 +48,11 @@ export default function App() {
           },
         }}
       >
+        {/* 
+          Splash Screen - Initial loading/branding screen
+          - No header shown for clean branding experience
+          - Typically shows logos and initializes app
+        */}
         <Stack.Screen 
           name="Splash" 
           component={SplashScreen} 
