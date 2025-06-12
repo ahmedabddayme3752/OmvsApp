@@ -5,179 +5,115 @@ import {
   Image,
   StyleSheet,
   TextInput,
-  TouchableOpacity,
+  Pressable,
   SafeAreaView,
 } from 'react-native';
 
-/**
- * LoginScreen Component
- * 
- * This is the authentication screen where users enter their credentials
- * to access the OMVS data collection application.
- * 
- * Features:
- * - Username and password input fields
- * - OMVS and RSPOP logo display
- * - Navigation to main collection screen after login
- * - Responsive design with proper styling
- * 
- * @param {Object} navigation - React Navigation object for screen transitions
- * @returns {JSX.Element} - Rendered login screen component
- */
 const LoginScreen = ({ navigation }) => {
-  // State management for form inputs
-  const [username, setUsername] = useState(''); // Store username input
-  const [password, setPassword] = useState(''); // Store password input
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
-  /**
-   * Handle user login attempt
-   * 
-   * Purpose:
-   * - Process login credentials (currently bypassed for demo)
-   * - Navigate to main collection screen on successful login
-   * - Could be extended to include actual authentication logic
-   * 
-   * TODO: Implement actual authentication with backend service
-   * TODO: Add form validation for username/password
-   * TODO: Add loading state during authentication
-   * TODO: Add error handling for failed login attempts
-   */
   const handleLogin = () => {
-    // TODO: Implement actual login logic
-    // This could include:
-    // - Validating input fields are not empty
-    // - Sending credentials to authentication server
-    // - Storing authentication token
-    // - Handling login errors
-    
-    // For now, directly navigate to collection screen
     navigation.navigate('Collect');
   };
 
-  // Render the login screen UI
   return (
     <SafeAreaView style={styles.container}>
-      {/* Main content area */}
       <View style={styles.content}>
-        {/* OMVS Logo - Main organization branding */}
         <Image
-          source={require('../assets/omvs-logo.png')} // OMVS organization logo
+          source={require('../assets/omvs-logo.png')}
           style={styles.logo}
-          resizeMode="contain" // Maintain aspect ratio
+          resizeMode="contain"
         />
         
-        {/* Input form container */}
         <View style={styles.inputContainer}>
-          {/* Username input field */}
           <TextInput
             style={styles.input}
-            placeholder="Nom d'utilisateur" // French: "Username"
+            placeholder="Nom d'utilisateur"
             value={username}
-            onChangeText={setUsername} // Update state on text change
-            autoCapitalize="none" // Prevent auto-capitalization for usernames
+            onChangeText={setUsername}
+            autoCapitalize="none"
           />
           
-          {/* Password input field */}
           <TextInput
             style={styles.input}
-            placeholder="Mot de passe" // French: "Password"
+            placeholder="Mot de passe"
             value={password}
-            onChangeText={setPassword} // Update state on text change
-            secureTextEntry // Hide password characters for security
+            onChangeText={setPassword}
+            secureTextEntry
           />
           
-          {/* Login button */}
-          <TouchableOpacity
-            style={styles.button}
-            onPress={handleLogin} // Trigger login when pressed
+          <Pressable
+            style={({ pressed }) => [
+              styles.button,
+              pressed && styles.buttonPressed
+            ]}
+            onPress={handleLogin}
           >
-            <Text style={styles.buttonText}>SE CONNECTER</Text> {/* French: "LOGIN" */}
-          </TouchableOpacity>
+            <Text style={styles.buttonText}>SE CONNECTER</Text>
+          </Pressable>
         </View>
       </View>
       
-      {/* RSPOP Logo - Partner organization branding at bottom */}
       <Image
-        source={require('../assets/rspop-logo.png')} // RSPOP partner logo
+        source={require('../assets/rspop-logo.png')}
         style={styles.bottomLogo}
-        resizeMode="contain" // Maintain aspect ratio
+        resizeMode="contain"
       />
     </SafeAreaView>
   );
 };
 
-/**
- * StyleSheet for LoginScreen component
- * 
- * Defines all visual styling for the login screen including:
- * - Layout and positioning
- * - Colors and typography
- * - Input field styling
- * - Button appearance
- * - Logo sizing and placement
- */
 const styles = StyleSheet.create({
-  // Main container - full screen with white background
   container: {
     flex: 1,
     backgroundColor: '#fff',
   },
-  
-  // Content area - centers content vertically and adds padding
   content: {
-    flex: 1, // Take up available space
-    alignItems: 'center', // Center horizontally
-    paddingHorizontal: 20, // Side padding
-    paddingTop: 40, // Top padding for status bar
+    flex: 1,
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 40,
   },
-  
-  // Main OMVS logo styling
   logo: {
     width: 200,
     height: 200,
-    marginBottom: 40, // Space below logo
+    marginBottom: 40,
   },
-  
-  // Container for input fields - full width with padding
   inputContainer: {
     width: '100%',
     paddingHorizontal: 20,
   },
-  
-  // Input field styling - consistent appearance for username/password
   input: {
-    backgroundColor: '#fff', // White background
-    borderRadius: 5, // Rounded corners
-    padding: 15, // Internal padding
-    marginBottom: 15, // Space between inputs
-    borderWidth: 1, // Border thickness
-    borderColor: '#ddd', // Light gray border
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    padding: 15,
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: '#ddd',
   },
-  
-  // Login button styling - blue background with rounded corners
   button: {
-    backgroundColor: '#2196F3', // Material Design blue
-    padding: 15, // Internal padding
-    borderRadius: 5, // Rounded corners
-    alignItems: 'center', // Center text horizontally
-    marginTop: 10, // Space above button
+    backgroundColor: '#2196F3',
+    padding: 15,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 10,
   },
-  
-  // Button text styling - white text, bold font
+  buttonPressed: {
+    backgroundColor: '#1976D2',
+    transform: [{ scale: 0.98 }],
+  },
   buttonText: {
-    color: '#fff', // White text
-    fontSize: 16, // Medium font size
-    fontWeight: 'bold', // Bold text
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
-  
-  // Bottom logo (RSPOP) styling - smaller size at bottom
   bottomLogo: {
     width: 150,
     height: 50,
-    alignSelf: 'center', // Center horizontally
-    marginBottom: 20, // Space from bottom edge
+    alignSelf: 'center',
+    marginBottom: 20,
   },
 });
 
-// Export component for use in navigation stack
 export default LoginScreen; 
